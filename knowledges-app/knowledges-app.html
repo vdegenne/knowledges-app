@@ -1,0 +1,57 @@
+<link rel="import" href="../directories-data/directories-data.html">
+
+<dom-module id="knowledges-app">
+  <template>
+    <app-toaster id="toaster">
+      <directories-data current-directory="{{currentDirectory}}" id="directories-data"></directories-data>
+
+
+      <app-router id="router" mode="pushstate">
+        <app-route path="/knowledges" element="main-page" onUrlChange="updateModel"></app-route>
+      </app-router>
+    </app-toaster>
+  </template>
+
+  <script>
+    class KnowledgesApp extends Polymer.Element
+    {
+      static get is () { return 'knowledges-app'; }
+
+      static get properties () {
+        return {
+          currentDirectory: {
+            type: Object,
+            value: function () { return {} }
+          }
+        }
+      }
+
+
+      connectedCallback () {
+        super.connectedCallback();
+        
+        this.addEventListener('fetch-home-directory', (e) => {
+
+          Valentin.request('/knowledges/api/directories/home-id', request => {
+            let feedback = request.response;
+
+            if (feedback.type &&  typeof feedback.data.directory_id !== "number") {
+              feedback.type = 0;
+              feedback.message = "wrong directory_id";
+            }
+            Valentin.toast(this.$.toaster, feedback.message, feedback.type);
+
+            
+            if (feedback.type) {
+              this.$['directories-data'].fetchInformations(feedback.data.directory_id);
+            }
+
+          });
+
+        });
+      }
+    }
+
+          customElements.define(KnowledgesApp.is, KnowledgesApp);
+  </script>
+</dom-module>

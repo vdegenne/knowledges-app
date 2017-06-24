@@ -1,0 +1,85 @@
+<script>
+  (function () {
+
+    let _data = {};
+    let _els = []
+
+    let _homeId = 15;
+
+
+    const _setDirectoryId = function (id) {
+      _data.directory_id = id;
+      _els.forEach(function (el) { el.load(); } );
+    }
+
+    
+    class DirectoriesData extends Polymer.Element
+    {
+      static get is () { return 'directories-data'; }
+
+      static get properties () {
+        return {
+          currentDirectory: {
+            type: Object,
+            notify: true
+          }
+        }
+      }
+
+      
+      static get observers () {
+        return [
+          '_currentDirectoryIdChanged(currentDirectory.directory_id)'
+        ]
+      }
+      
+
+      _currentDirectoryIdChanged (id) {
+        if (id === undefined)
+          return;
+        
+        _setDirectoryId (id);
+      }
+
+
+      _getHomeId () {
+        
+        Valentin.request('/knowledges/api/directories/home-id', request => {
+          let feedback = request.response;
+
+          Valentin.toast(this, feedback.message, feedback.type);
+
+          console.log(_homeId);
+        });
+      }
+
+
+      fetchInformations (directory_id) {
+        Valentin.request(`/knowledges/api/directories/${directory_id}/informations`, request => {
+          let feedback = request.response;
+
+          Valentin.toast(this, feedback.message, feedback.type);
+
+          if (feedback.type) {
+            
+          }
+        });
+      }
+
+      load () {
+        this.currentDirectory.directory_id = _data.directory_id;
+      }
+      
+      
+      connectedCallback () {
+        _els.push(this);
+      }
+
+      disconnectedCallback () {
+        _els.splice(_els.indexOf(this), 1);
+      }
+    }
+
+    customElements.define(DirectoriesData.is, DirectoriesData);
+  })();
+</script>

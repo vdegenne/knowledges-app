@@ -1,0 +1,55 @@
+<link rel="import" href="../directories-data/directories-data.html">
+
+<dom-module id="main-page">
+  <template>
+    <directories-data test-value="{{testValue}}" current-directory="{{currentDirectory}}" id="directories-data"></directories-data>
+
+    <b>test</b>
+  </template>
+
+  <script>
+    class MainPage extends Polymer.Element
+    {
+      static get is () { return 'main-page'; }
+
+      static get properties () {
+        return {
+          directory_id: {
+            type: Number,
+            observer: '_directoryIdChanged'
+          },
+
+          currentDirectory: {
+            type: Object,
+            value: function () { return {} }
+          }
+        }
+      }
+
+
+      _directoryIdChanged (id) {
+        this.set('currentDirectory.directory_id', id);
+      }
+
+      ready () {
+        super.ready();
+
+        /**
+         * we make this verification here because the app-router
+         * is providing with the query-string property `directory_id`.
+         * and if the property doesn't exist, we should tell the app
+         * to fetch the default directory.
+         */
+        if (this.directory_id === undefined) {
+          this.dispatchEvent(
+            new CustomEvent('fetch-home-directory',
+                            { bubbles: true, composed: true}));
+        }
+        // else _directoryIdChanged will take care of the fetch
+      }
+      
+    }
+
+    customElements.define(MainPage.is, MainPage);
+  </script>
+</dom-module>
