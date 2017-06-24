@@ -10,8 +10,14 @@
   const _setCurrentDirectory = function (currentDirectory) {
     _data.currentDirectory = currentDirectory || {};
 
-    _els.forEach(function(el){ el.currentDirectory = currentDirectory; });
+    _els.forEach(function(el){ el.load(_data); });
   }
+
+  let _previouslyFetchedDirectoryId = undefined;
+
+
+
+  
   
   class DirectoriesData extends Polymer.Element
   {
@@ -35,9 +41,10 @@
     
 
     _currentDirectoryIdChanged (id) {
-      if (id === undefined)
+      if (id === undefined || id === _previouslyFetchedDirectoryId)
         return;
-      
+
+      _previouslyFetchedDirectoryId = id;
       this.fetchInformations (id);
     }
 

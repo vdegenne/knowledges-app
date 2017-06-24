@@ -1,57 +1,100 @@
-l<link rel="import" href="elements.html">
+<link rel="import" href="elements.html">
 
 <dom-module id="knowledges-app">
   <template>
+    <style>
+      app-header {
+        background-color: var(--paper-brown-500);
+        color: #fff;
+      }
+      :host([resource]) app-header {
+        background: var(--google-green-500);
+      }
+
+      @media (min-width: 730px) {
+        app-toolbar {
+          width: 700px;
+          margin: 0 auto;
+        }
+      }
+    </style>
     <app-toaster id="toaster">
       <directories-data current-directory="{{currentDirectory}}" id="directories-data"></directories-data>
 
 
+      <app-header reveals>
+        <app-toolbar>
+          <div main-title>{{currentDirectory.name}} ({{currentDirectory.directory_id}})</div>
+          <paper-icon-button icon="home" on-click="go_home"></paper-icon-button>
+        </app-toolbar>
+      </app-header>
+
+      
+
       <app-router id="router" mode="pushstate">
-        <app-route path="/knowledges" element="main-page" onUrlChange="updateModel"></app-route>
+        <app-route path="/knowledges" element="main-page" onUrlChange="updateModel" bindRouter></app-route>
+        <app-route path="/search" element="search-page" onUrlChange="updateModel" bindRouter></app-route>
       </app-router>
     </app-toaster>
   </template>
 
   <script>
-    class KnowledgesApp extends Polymer.Element
-    {
-      static get is () { return 'knowledges-app'; }
+  class KnowledgesApp extends Polymer.Element
+  {
+    static get is () { return 'knowledges-app'; }
 
-      static get properties () {
-        return {
-          currentDirectory: {
-            type: Object,
-            value: function () { return {} }
-          }
+    static get properties () {
+      return {
+        currentDirectory: {
+          type: Object,
+          value: function () { return {} }
         }
-      }
-
-
-      constructor () {
-        super();
-        
-        this.addEventListener('fetch-home-directory', (e) => {
-
-          Valentin.request('/knowledges/api/directories/home-id', request => {
-            let feedback = request.response;
-
-            if (feedback.type &&  typeof feedback.data.directory_id !== "number") {
-              feedback.type = 0;
-              feedback.message = "wrong directory_id";
-            }
-            Valentin.toast(this.$.toaster, feedback.message, feedback.type);
-
-            
-            if (feedback.type) {
-              this.$['directories-data'].fetchInformations(feedback.data.directory_id);
-            }
-
-          });
-
-        });
       }
     }
 
-          customElements.define(KnowledgesApp.is, KnowledgesApp);
+    static get observers () {
+      return [
+        '_currentDirectoryChanged(currentDirectory.*)'
+      ]
+    }
+
+    constructor () {
+      super();
+      
+      this.addEventListener('fetch-home-directory', (e) => {
+
+        Valentin.request('/knowledges/api/directories/home-id', request => {
+          let feedback = request.response;
+
+          if (feedback.type &&  typeof feedback.data.directory_id !== "number") {
+            feedback.type = 0;
+            feedback.message = "wrong directory_id";
+          }
+          Valentin.toast(this.$.toaster, feedback.message, feedback.type);
+
+          
+          if (feedback.type) {
+            this.$.router.go(`?directory_id=${feedback.data.directory_id}`);
+          }
+
+        });
+
+      });
+    }
+
+    _currentDirectoryChanged () {
+      if (this.currentDirectory.is_resource) {
+        this.setAttribute('resource', '');
+      }
+      else
+        this.removeAttribute('resource');
+    }
+
+    go_home () {
+      this.dispatchEvent(new CustomEvent('fetch-home-directory', { bubbles: true }));
+    }
+  }
+
+  customElements.define(KnowledgesApp.is, KnowledgesApp);
   </script>
 </dom-module>

@@ -4,9 +4,63 @@
   <template>
     <directories-data test-value="{{testValue}}" current-directory="{{currentDirectory}}" id="directories-data"></directories-data>
 
-    <template is="dom-repeat" items="{{currentDirectory.children}}" as="child">
-      {{child.name}}
+    <!-- CHILDREN -->
+    <div id="children">
+      <template is="dom-repeat" items="{{currentDirectory.children}}" as="child">
+        <div class="child" on-click="_enterChild" title="{{child.name}}" resource$="{{child.is_resource}}">
+          <iron-icon icon="folder"></iron-icon><br>
+          <span style="white-space:nowrap;font-size:0.8em;">{{child.name}}</span>
+        </div>
+      </template>
+    </div>
+    <style>
+      #children {
+        margin: 20px auto 0 auto;
+      }
+      @media (min-width: 730px) {
+        #children {
+          width: 700px;
+        }
+      }
+      
+      #children .child {
+        display: inline-block;
+        width: 107px;
+        margin: 10px 10px 0 10px;
+        text-align: center;
+
+        cursor: pointer;
+
+        overflow-x: hidden;
+        text-overflow: ellipsis;
+      }
+
+      #children .child iron-icon {
+        color: var(--paper-amber-400);
+        
+        --iron-icon-width: 45px;
+        --iron-icon-height: 45px;
+      }
+
+      #children .child[resource] iron-icon {
+        color: var(--paper-deep-orange-300);
+      }
+
+      
+      #children .child * {
+        display: inline-block;
+
+      }
+    </style>
+
+
+    <!-- KNOWLEDGES (TEMPORARY) -->
+    <template is="dom-repeat" items="{{currentDirectory.knowledges}}" as="knowledge">
+      <div style="padding: 0 0 0 10px">
+        <span>{{knowledge.knowledge}}</span> : <span>{{knowledge.translation}}</span><br>
+      </div>
     </template>
+    
   </template>
 
   <script>
@@ -47,6 +101,11 @@
                             { bubbles: true, composed: true}));
         }
         // else _directoryIdChanged will take care of the fetch
+      }
+
+
+      _enterChild (e) {
+        this.router.go(`?directory_id=${e.model.child.directory_id}`);
       }
       
     }

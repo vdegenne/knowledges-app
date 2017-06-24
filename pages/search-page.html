@@ -1,0 +1,34 @@
+<dom-module id="search-page">
+  <template>
+    
+  </template>
+
+  <script>
+  class SearchPage extends Polymer.Element
+  {
+    static get is () { return 'search-page'; }
+
+    static get properties () {
+      return {
+        q: {
+          type: String
+        }
+      }
+    }
+
+    static get observers () {
+      return [
+        '_qChanged(q)'
+      ]
+    }
+
+    _qChanged (q) {
+      console.log('search changed');
+    }
+
+        
+  }
+
+  customElements.define(SearchPage.is, SearchPage);
+  </script>
+</dom-module>
