@@ -1,0 +1,23 @@
+{
+  "name": "knowledges-app",
+  "description": "personal application using Polymer 2.0 for managing my `knowledges` database.",
+  "homepage": "https://github.com/vdegenne/knowledges-app",
+  "license": "https://github.com/vdegenne/knowledges-app/LICENSE.txt",
+  "authors": [
+    "Valentin Degenne <vdegenne@gmail.com>"
+  ],
+  "main": "knowledges-app.html",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "src/www/components/bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "polymer": "Polymer#^2.0.1",
+    "valentin": "*",
+    "app-router": "^2.7.2"
+  }
+}

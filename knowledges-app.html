@@ -1,4 +1,4 @@
-<link rel="import" href="../directories-data/directories-data.html">
+l<link rel="import" href="elements.html">
 
 <dom-module id="knowledges-app">
   <template>
@@ -27,8 +27,8 @@
       }
 
 
-      connectedCallback () {
-        super.connectedCallback();
+      constructor () {
+        super();
         
         this.addEventListener('fetch-home-directory', (e) => {
 

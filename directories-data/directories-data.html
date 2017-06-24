@@ -1,85 +1,78 @@
 <script>
-  (function () {
+(function () {
 
-    let _data = {};
-    let _els = []
+  let _data = {
+    currentDirectory: {}
+  };
 
-    let _homeId = 15;
+  let _els = []
 
+  const _setCurrentDirectory = function (currentDirectory) {
+    _data.currentDirectory = currentDirectory || {};
 
-    const _setDirectoryId = function (id) {
-      _data.directory_id = id;
-      _els.forEach(function (el) { el.load(); } );
+    _els.forEach(function(el){ el.currentDirectory = currentDirectory; });
+  }
+  
+  class DirectoriesData extends Polymer.Element
+  {
+    static get is () { return 'directories-data'; }
+
+    static get properties () {
+      return {
+        currentDirectory: {
+          type: Object,
+          notify: true
+        }
+      }
     }
 
     
-    class DirectoriesData extends Polymer.Element
-    {
-      static get is () { return 'directories-data'; }
+    static get observers () {
+      return [
+        '_currentDirectoryIdChanged(currentDirectory.directory_id)'
+      ]
+    }
+    
 
-      static get properties () {
-        return {
-          currentDirectory: {
-            type: Object,
-            notify: true
-          }
-        }
-      }
-
+    _currentDirectoryIdChanged (id) {
+      if (id === undefined)
+        return;
       
-      static get observers () {
-        return [
-          '_currentDirectoryIdChanged(currentDirectory.directory_id)'
-        ]
-      }
-      
-
-      _currentDirectoryIdChanged (id) {
-        if (id === undefined)
-          return;
-        
-        _setDirectoryId (id);
-      }
-
-
-      _getHomeId () {
-        
-        Valentin.request('/knowledges/api/directories/home-id', request => {
-          let feedback = request.response;
-
-          Valentin.toast(this, feedback.message, feedback.type);
-
-          console.log(_homeId);
-        });
-      }
-
-
-      fetchInformations (directory_id) {
-        Valentin.request(`/knowledges/api/directories/${directory_id}/informations`, request => {
-          let feedback = request.response;
-
-          Valentin.toast(this, feedback.message, feedback.type);
-
-          if (feedback.type) {
-            
-          }
-        });
-      }
-
-      load () {
-        this.currentDirectory.directory_id = _data.directory_id;
-      }
-      
-      
-      connectedCallback () {
-        _els.push(this);
-      }
-
-      disconnectedCallback () {
-        _els.splice(_els.indexOf(this), 1);
-      }
+      this.fetchInformations (id);
     }
 
-    customElements.define(DirectoriesData.is, DirectoriesData);
-  })();
+
+    fetchInformations (directory_id) {
+      Valentin.request(`/knowledges/api/directories/${directory_id}/informations`, request => {
+        let feedback = request.response;
+
+        Valentin.toast(this, feedback.message, feedback.type);
+
+        if (feedback.type) {
+          _setCurrentDirectory(feedback.data);
+        }
+      });
+    }
+
+
+    
+    constructor () {
+      super();
+      _els.push(this);
+      this.load();
+    }
+
+    disconnectedCallback () {
+      _els.splice(_els.indexOf(this), 1);
+    }
+
+    load () {
+      if (_data) {
+        this.currentDirectory = _data.currentDirectory;
+      }
+    }
+  }
+
+  customElements.define(DirectoriesData.is, DirectoriesData);
+})();
 </script>

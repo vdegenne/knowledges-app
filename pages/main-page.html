@@ -4,7 +4,9 @@
   <template>
     <directories-data test-value="{{testValue}}" current-directory="{{currentDirectory}}" id="directories-data"></directories-data>
 
-    <b>test</b>
+    <template is="dom-repeat" items="{{currentDirectory.children}}" as="child">
+      {{child.name}}
+    </template>
   </template>
 
   <script>
@@ -26,13 +28,12 @@
         }
       }
 
-
       _directoryIdChanged (id) {
         this.set('currentDirectory.directory_id', id);
       }
 
-      ready () {
-        super.ready();
+      connectedCallback () {
+        super.connectedCallback();
 
         /**
          * we make this verification here because the app-router
