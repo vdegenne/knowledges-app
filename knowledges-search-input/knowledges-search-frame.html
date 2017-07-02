@@ -1,0 +1,24 @@
+<dom-module id="knowledges-search-frame">
+  <template>
+    <b>test</b>
+  </template>
+
+  <script>
+  class KnowledgesSearchFrame extends Polymer.Element
+  {
+    static get is () { return 'knowledges-search-frame'; }
+
+    static get properties () {
+      return {
+        q: {
+          type: String,
+          value: ''
+        }
+      }
+
+      
+    }
+
+    customElements.define(KnowledgesSearchFrame.is, KnowledgesSearchFrame);
+  </script>
+</dom-module>

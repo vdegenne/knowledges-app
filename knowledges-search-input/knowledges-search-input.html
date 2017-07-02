@@ -1,0 +1,59 @@
+<dom-module id="knowledges-search-input">
+  <template>
+    <input type="search" value="{{q::keyup}}">
+
+    <template is="dom-repeat" items="{{invocations}}" as="invocation">
+      <p>{{invocation.context}}</p>
+    </template>
+  </template>
+
+  <script>
+  class KnowledgesSearchInput extends Polymer.Element
+  {
+    static get is () { return 'knowledges-search-input'; }
+
+    static get properties () {
+      return {
+        q: {
+          type: String,
+          value: '',
+          observer: '_qChanged'
+        },
+
+        invocations: {
+          type: Array,
+          value: function () { return [] }
+        }
+      }
+    }
+
+    _qChanged (q) {
+      
+      if (!this.q) {
+        return;
+      }
+
+      this._debouncer = Polymer.Debouncer.debounce(
+        this._debouncer,
+        Polymer.Async.timeOut.after(2000),
+        () => {
+          Valentin.request(
+            `/knowledges/api/search?q=${this.q}`,
+            request => {
+              let feedback = request.response;
+
+              Valentin.toast(this, feedback.message, feedback.type);
+
+              if (feedback.type) {
+                this.set('invocations', feedback.data.invocations);
+              }
+            });
+          
+        });
+    }
+  }
+  
+  
+  customElements.define(KnowledgesSearchInput.is, KnowledgesSearchInput);
+  </script>
+</dom-module>
