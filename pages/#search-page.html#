@@ -1,7 +1,10 @@
 <dom-module id="search-page">
   <template>
     <input type="search" value="{{q::keyup}}">
-    
+
+    <template is="dom-repeat" items="{{knowledges}}">
+      {{
+    </template>
   </template>
 
   <script>
