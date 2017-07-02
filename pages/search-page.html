@@ -1,6 +1,5 @@
 <dom-module id="search-page">
   <template>
-    <input type="search" value="{{q::keyup}}">
     
   </template>
 
@@ -13,11 +12,6 @@
       return {
         q: {
           type: String
-        },
-
-        knowledges: {
-          type: Array,
-          value: function () { return [] }
         }
       }
     }
@@ -29,21 +23,7 @@
     }
 
     _qChanged (q) {
-      this._debouncer = Polymer.Debouncer.debounce(
-        this._debouncer,
-        Polymer.Async.timeOut.after(2000),
-        () => {
-          Valentin.request(
-            `/knowledges/api/knowledges/search?q=${this.q}`,
-            request => {
-              let feedback = request.response;
-
-              Valentin.toast(this, feedback.message, feedback.type);
-            });
-          
-        }
-      );
-      
+      console.log('search changed');
     }
 
         

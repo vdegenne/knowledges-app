@@ -26,7 +26,6 @@
         <app-toolbar>
           <div main-title>{{currentDirectory.name}} ({{currentDirectory.directory_id}})</div>
           <paper-icon-button icon="home" on-click="go_home"></paper-icon-button>
-          <paper-icon-button icon=search on-click="go_search_page"></paper-icon-button>
         </app-toolbar>
       </app-header>
 
@@ -34,7 +33,7 @@
 
       <app-router id="router" mode="pushstate">
         <app-route path="/knowledges" element="main-page" onUrlChange="updateModel" bindRouter></app-route>
-        <app-route path="/knowledges/search" element="search-page" onUrlChange="updateModel" bindRouter></app-route>
+        <app-route path="/search" element="search-page" onUrlChange="updateModel" bindRouter></app-route>
       </app-router>
     </app-toaster>
   </template>
@@ -93,10 +92,6 @@
 
     go_home () {
       this.dispatchEvent(new CustomEvent('fetch-home-directory', { bubbles: true }));
-    }
-
-    go_search_page () {
-      this.$.router.go('/knowledges/search');
     }
   }
 
